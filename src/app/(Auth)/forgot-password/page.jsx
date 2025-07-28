@@ -1,0 +1,124 @@
+'use client';
+
+import Head from 'next/head';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import {
+  forgotPasswordWrapper,
+  forgotPasswordCard,
+  forgotPasswordIconWrapper,
+  forgotPasswordButton,
+  forgotPasswordTitle,
+  forgotPasswordText,
+  backLink,
+  inputBase,
+} from '@/styles/theme';
+
+export default function ForgotPassword() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    setError('');
+
+    try {
+      const res = await fetch('/api/forget-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (data.status === 200) {
+        setMessage('✅ Reset link sent to your email');
+        setEmail('');
+      } else {
+        setError(data.message || '❌ Something went wrong');
+      }
+    } catch {
+      setError('❌ Server error. Try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Auto-hide messages after 2.5s
+  useEffect(() => {
+    if (message || error) {
+      const timer = setTimeout(() => {
+        setMessage('');
+        setError('');
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [message, error]);
+
+  return (
+    <>
+      <Head>
+        <title>SaaS AI Agent App - Forgot Password</title>
+      </Head>
+
+      <div className={forgotPasswordWrapper}>
+        <div className={forgotPasswordCard}>
+          {/* Icon */}
+          <div className="flex justify-center mb-4">
+            <div className={forgotPasswordIconWrapper}>
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 12H8m0 0l4-4m-4 4l4 4m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Title and Description */}
+          <h2 className={forgotPasswordTitle}>Forgot Your Password?</h2>
+          <p className={forgotPasswordText}>Enter your email and we'll send you a reset link.</p>
+
+          {/* Feedback Messages */}
+          {message && (
+            <p className="text-sm text-green-700 bg-green-100 px-3 py-2 rounded text-center mt-2 animate-pulse">
+              {message}
+            </p>
+          )}
+          {error && (
+            <p className="text-sm text-red-600 bg-red-100 px-3 py-2 rounded text-center mt-2 animate-pulse">
+              {error}
+            </p>
+          )}
+
+          {/* Form */}
+          <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className={inputBase}
+            />
+            <button
+              type="submit"
+              className={`${forgotPasswordButton} ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Send Password Reset Link'}
+            </button>
+          </form>
+
+          {/* Back Link */}
+          <div className="mt-6 text-center">
+            <Link href="/login" className={backLink}>
+              ← Back to Log In
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
