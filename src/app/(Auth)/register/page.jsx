@@ -1,9 +1,9 @@
 "use client";
 
 import Head from "next/head";
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +13,13 @@ export default function Register() {
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const auth = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (auth.user) {
+      router.push("/");
+    }
+  }, [auth.user]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -30,131 +37,88 @@ export default function Register() {
       const data = await res.json();
 
       if (res.ok && data.status === 201) {
-        setSuccessMsg("Registration successful! Redirecting to login...");
+        setSuccessMsg("Registration successful! Redirecting...");
         setEmail("");
         setPassword("");
-
         setTimeout(() => {
-          setSuccessMsg("");
           router.push("/login");
         }, 1500);
       } else {
         setErrorMsg(data.message || "Something went wrong");
-
-        setTimeout(() => {
-          setErrorMsg("");
-        }, 3000);
       }
     } catch (error) {
       console.error("Error registering:", error);
-      setErrorMsg("Failed to register. Try again later.");
-
-      setTimeout(() => {
-        setErrorMsg("");
-      }, 3000);
+      setErrorMsg("Failed to register.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleLoginRedirect = () => {
+    router.push("/login");
+  };
+
   return (
     <>
       <Head>
-        <title>SaaS AI Agent App - Register</title>
+        <title>Register | Rustam Finance System</title>
       </Head>
-
       <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 11c0-1.105.895-2 2-2s2 .895 2 2-.895 2-2 2-2-.895-2-2z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 6v12h16V6M4 6l8 6 8-6"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <h1 className="text-2xl font-bold text-center mb-6">
-            SaaS AI Agent App – Registration
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-md">
+          <h1 className="text-2xl font-bold text-center text-gray-800">
+            Rustam Industry Finance<br />Management System
           </h1>
+          <p className="text-sm text-gray-500 text-center mt-1 mb-6">
+            Create your admin account to get started
+          </p>
 
           {errorMsg && (
-            <div className="text-sm text-red-600 bg-red-100 px-3 py-2 rounded mb-4">
+            <div className="text-sm text-red-600 bg-red-100 px-3 py-2 rounded mb-4 text-center">
               {errorMsg}
             </div>
           )}
           {successMsg && (
-            <div className="text-sm text-green-700 bg-green-100 px-3 py-2 rounded mb-4">
+            <div className="text-sm text-green-700 bg-green-100 px-3 py-2 rounded mb-4 text-center">
               {successMsg}
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleRegister}>
+          <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Gmail Address
-              </label>
+              <label className="text-sm text-gray-600">Email Address</label>
               <input
-                id="email"
                 type="email"
-                required
-                placeholder="Enter your Gmail"
+                placeholder="Enter your email"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 px-5 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Create a password"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-24"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 text-sm text-blue-600 hover:underline focus:outline-none"
               >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 px-5 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
+
 
             <button
               type="submit"
-              className={`w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
               disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition duration-200"
             >
               {loading ? "Registering..." : "Register"}
             </button>
@@ -162,9 +126,13 @@ export default function Register() {
 
           <div className="text-center mt-4 text-sm text-gray-600">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">
+            <button
+              type="button"
+              onClick={handleLoginRedirect}
+              className="text-blue-600 hover:underline focus:outline-none"
+            >
               Log in
-            </Link>
+            </button>
           </div>
         </div>
       </div>

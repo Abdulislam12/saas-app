@@ -1,58 +1,42 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
-import { logoutUser } from '@/redux/auth/authActions';
-import Loader from '../app/components/Loader';
-import Form from './components/Form/Form';
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { logout } from "../lib/authSlice";
 
-import {
-  buttonPrimary,
-  pageWrapper,
-  cardContainer,
-  headingText,
-  textCenter,
-} from '@/styles/theme';
-
-const Page = () => {
+export default function HomePage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.replace('/login');
+    if (!isAuthenticated) {
+      router.push("/login");
     }
-  }, [loading, isAuthenticated, router]);
+  }, [isAuthenticated]);
 
-  const handleLogout = async () => {
-    await dispatch(logoutUser());
-    router.replace('/login');
+  if (!isAuthenticated) return null;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
   };
 
-  if (loading || !isAuthenticated) {
-    return <Loader />;
-  }
-
   return (
-    <>
-      {/* ✅ Navbar */}
-      <nav className="bg-blue-600 text-white py-3 px-6 flex justify-between items-center shadow-md">
-        <h1 className="text-lg font-bold">MyApp</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm hidden sm:block">
-            Welcome, {user?.name || 'User'}
-          </span>
-          <button onClick={handleLogout} className="bg-white text-blue-600 px-4 py-1 rounded hover:bg-gray-100 text-sm font-semibold transition">
-            Logout
-          </button>
-        </div>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <nav className="bg-blue-600 text-white px-4 py-3 flex justify-between rounded">
+        <span>Welcome, {user?.email}</span>
+        <button
+          onClick={handleLogout}
+          className="bg-white text-blue-600 px-4 py-1 rounded hover:bg-gray-200"
+        >
+          Logout
+        </button>
       </nav>
-
-      <Form />
-    </>
+      <div className="mt-6 text-xl font-semibold">
+        This is a protected Home Page
+      </div>
+    </div>
   );
-};
-
-export default Page;
+}

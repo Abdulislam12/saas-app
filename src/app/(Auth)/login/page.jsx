@@ -1,21 +1,35 @@
 "use client";
 
-import Head from "next/head";
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../../../lib/authSlice";
 
-export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (auth.user) {
+      router.push("/");
+    }
+  }, [auth.user]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+
+    if (!email || !password) {
+      setErrorMsg("Please fill in all fields");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -28,126 +42,111 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok && data.status === 200) {
+        dispatch(loginSuccess({ user: data.user, token: data.token }));
         router.push("/");
       } else {
-        setErrorMsg(data.message || "Invalid credentials");
-        setTimeout(() => setErrorMsg(""), 3000);
+        setErrorMsg(data.message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setErrorMsg("Server error. Try again later.");
-      setTimeout(() => setErrorMsg(""), 3000);
-    } finally {
-      setLoading(false);
+      setErrorMsg("Something went wrong");
     }
+
+    setLoading(false);
+  };
+
+  const handleForgotPasswordClick = () => {
+    router.push("/forgot-password");
+  };
+
+  const handleCreateAccountClick = () => {
+    router.push("/register");
   };
 
   return (
-    <>
-      <Head>
-        <title>SaaS AI Agent App - Login</title>
-      </Head>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800 leading-tight">
+            Rustam Industry Finance <br /> Management System
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Sign in to your admin account to continue
+          </p>
+        </div>
 
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 21v-2a4 4 0 00-8 0v2M12 11a4 4 0 100-8 4 4 0 000 8z"
-                />
-              </svg>
-            </div>
+        {errorMsg && (
+          <p className="text-red-600 text-center text-sm mb-4">{errorMsg}</p>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="text-sm text-gray-600">Email Address</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full mt-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
 
-          <h1 className="text-2xl font-bold text-center mb-6">
-            SaaS AI Agent App – Login
-          </h1>
-
-          {errorMsg && (
-            <div className="text-sm text-red-600 bg-red-100 px-3 py-2 rounded mb-4">
-              {errorMsg}
-            </div>
-          )}
-
-          <form className="space-y-6" onSubmit={handleLogin}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Gmail Address
-              </label>
+          <div>
+            <label className="text-sm text-gray-600">Password</label>
+            <div className="relative">
               <input
-                id="email"
-                type="email"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="w-full mt-1 px-4 py-2 pr-20 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your Gmail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 px-5 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-sm text-blue-600 hover:underline focus:outline-none"
               >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 px-5 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
-              <div className="text-right mt-1">
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              className={`w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          <div className="text-center mt-4 text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-blue-600 hover:underline">
-              Register
-            </Link>
           </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 text-gray-600">
+              <input type="checkbox" className="form-checkbox" />
+              Remember me
+            </label>
+            <button
+              type="button"
+              onClick={handleForgotPasswordClick}
+              className="text-blue-600 hover:underline focus:outline-none"
+            >
+              Forgot Password?
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200"
+          >
+            {loading ? "Logging in..." : "Sign In"}
+          </button>
+        </form>
+
+        <div className="text-center mt-6">
+          <span className="text-sm text-gray-600">Don't have an account? </span>
+          <button
+            type="button"
+            onClick={handleCreateAccountClick}
+            className="text-blue-600 hover:underline text-sm focus:outline-none"
+          >
+            Create New Account
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
