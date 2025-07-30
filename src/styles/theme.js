@@ -48,9 +48,33 @@ export const forgotPasswordTitle =
 export const forgotPasswordText =
   'text-gray-600 text-sm mb-6';
 
-// styles/theme.js
-export const inputField = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none';
-export const textAreaField = 'w-full px-4 py-3 rounded-lg border border-gray-300 resize-none focus:outline-none';
-export const labelText = 'block text-gray-700 mb-2';
-export const formGroup = 'mb-4';
-export const formWrapper = '';
+// 🔽 New styles for Register form
+export const formWrapper =
+  'min-h-screen flex items-center justify-center bg-gray-100 px-4';
+
+export const formBox =
+  'bg-white p-8 rounded-2xl shadow-md max-w-md w-full';
+
+export const formHint =
+  'text-sm text-gray-500 text-center mt-1 mb-6';
+
+export const formError =
+  'text-sm text-red-600 bg-red-100 px-3 py-2 rounded mb-4 text-center';
+
+export const formSuccess =
+  'text-sm text-green-700 bg-green-100 px-3 py-2 rounded text-center mt-2 animate-pulse';
+
+export const passwordToggle =
+  'absolute inset-y-0 right-3 top-9 text-sm text-blue-600 hover:underline focus:outline-none';
+
+export const loginRedirectText =
+  'text-center mt-4 text-sm text-gray-600';
+
+export const loginRedirectButton =
+  'text-blue-600 hover:underline focus:outline-none';
+
+export const errorText = 'text-sm text-red-500 mb-3 text-center';
+export const successText = 'text-sm text-green-500 mb-3 text-center';
+export const subText = 'text-sm text-gray-500 mt-1 text-center';
+
+

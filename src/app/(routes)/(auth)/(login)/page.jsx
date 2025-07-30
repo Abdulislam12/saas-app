@@ -3,7 +3,24 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess } from "../../../lib/authSlice";
+import { loginSuccess } from "../../../../lib/authSlice";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { CiLock } from "react-icons/ci";
+
+import {
+  buttonPrimary,
+  inputBase,
+  cardContainer,
+  headingText,
+  formLabel,
+  linkText,
+  pageWrapper,
+  textCenter,
+  formError,
+  loginRedirectText,
+  loginRedirectButton,
+  passwordToggle,
+} from "@/styles/theme";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,9 +33,7 @@ export default function LoginPage() {
   const auth = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (auth.user) {
-      router.push("/");
-    }
+    if (auth.user) router.push("/");
   }, [auth.user]);
 
   const handleLogin = async (e) => {
@@ -55,58 +70,53 @@ export default function LoginPage() {
     setLoading(false);
   };
 
-  const handleForgotPasswordClick = () => {
-    router.push("/forgot-password");
-  };
-
-  const handleCreateAccountClick = () => {
-    router.push("/register");
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800 leading-tight">
-            Rustam Industry Finance <br /> Management System
+    <div className={pageWrapper}>
+      <div className={cardContainer}>
+        <div className={textCenter}>
+          <h2 className={headingText}>
+            SaaS AI App
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Sign in to your admin account to continue
+            Login to your account to continue
           </p>
         </div>
 
-        {errorMsg && (
-          <p className="text-red-600 text-center text-sm mb-4">{errorMsg}</p>
-        )}
+        {errorMsg && <p className={formError}>{errorMsg}</p>}
 
         <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="text-sm text-gray-600">Email Address</label>
+          <div className="relative">
+            <MdOutlineMailOutline className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full mt-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`${inputBase} pl-10`} // add left padding to make space for the icon
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-
           <div>
-            <label className="text-sm text-gray-600">Password</label>
+            <label className={formLabel}>Password</label>
             <div className="relative">
+              {/* Icon */}
+              <CiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl" />
+
+              {/* Input field */}
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="w-full mt-1 px-4 py-2 pr-20 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${inputBase} pl-10 pr-20`} // padding left for icon, right for button
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+
+              {/* Show/Hide toggle */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-sm text-blue-600 hover:underline focus:outline-none"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-blue-600 hover:underline focus:outline-none cursor-pointer"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -120,8 +130,8 @@ export default function LoginPage() {
             </label>
             <button
               type="button"
-              onClick={handleForgotPasswordClick}
-              className="text-blue-600 hover:underline focus:outline-none"
+              onClick={() => router.push("/forgot-password")}
+              className={linkText}
             >
               Forgot Password?
             </button>
@@ -130,18 +140,18 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200"
+            className={`${buttonPrimary} ${loading && "opacity-50 cursor-not-allowed"}`}
           >
             {loading ? "Logging in..." : "Sign In"}
           </button>
         </form>
 
-        <div className="text-center mt-6">
-          <span className="text-sm text-gray-600">Don't have an account? </span>
+        <div className={loginRedirectText}>
+          <span>Don't have an account? </span>
           <button
             type="button"
-            onClick={handleCreateAccountClick}
-            className="text-blue-600 hover:underline text-sm focus:outline-none"
+            onClick={() => router.push("/register")}
+            className={loginRedirectButton}
           >
             Create New Account
           </button>

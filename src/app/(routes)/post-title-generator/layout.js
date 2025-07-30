@@ -1,8 +1,9 @@
 // src/app/layout.js
-import "./globals.css";
+// import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import ReduxProvider from "../lib/ReduxProvider"; // ✅ import this
-import DashboardLayoutWrapper from "./components/DashboardLayoutWrapper";
+// import ReduxProvider from "../lib/ReduxProvider"; 
+import ReduxProvider from "@/lib/ReduxProvider";
+import DashboardLayoutWrapper from "@/app/components/DashboardLayoutWrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,11 +23,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {/* <DashboardLayoutWrapper> */}
+        <DashboardLayoutWrapper>
           <ReduxProvider>
             {children}
           </ReduxProvider> {/* ✅ wrap here only */}
-        {/* </DashboardLayoutWrapper> */}
+        </DashboardLayoutWrapper>
       </body>
     </html>
   );

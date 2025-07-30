@@ -10,6 +10,9 @@ import {
   textCenter,
   iconWrapper,
   pageWrapper,
+  errorText,
+  successText,
+  subText,
 } from '@/styles/theme';
 
 export default function ResetPasswordConfirm() {
@@ -55,7 +58,7 @@ export default function ResetPasswordConfirm() {
       } else {
         setError(data.message || 'Something went wrong');
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong');
     } finally {
       setLoading(false);
@@ -88,14 +91,12 @@ export default function ResetPasswordConfirm() {
             </svg>
           </div>
           <h2 className={headingText}>Reset Your Password</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Enter your new password below.
-          </p>
+          <p className={subText}>Enter your new password below.</p>
         </div>
 
         {/* Status Messages */}
-        {error && <p className="text-sm text-red-500 mb-3 text-center">{error}</p>}
-        {success && <p className="text-sm text-green-500 mb-3 text-center">{success}</p>}
+        {error && <p className={errorText}>{error}</p>}
+        {success && <p className={successText}>{success}</p>}
 
         {/* Input Field */}
         <input

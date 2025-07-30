@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "../lib/authSlice";
 
+
+
 export default function HomePage() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -34,8 +36,8 @@ export default function HomePage() {
           Logout
         </button>
       </nav>
-      <div className="mt-6 text-xl font-semibold">
-        This is a protected Home Page
+      <div className="min-h-screen bg-gray-100 p-4">
+        
       </div>
     </div>
   );

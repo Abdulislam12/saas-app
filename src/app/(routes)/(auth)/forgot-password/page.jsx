@@ -1,7 +1,7 @@
 'use client';
 
 import Head from 'next/head';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   forgotPasswordWrapper,
@@ -12,6 +12,8 @@ import {
   forgotPasswordText,
   backLink,
   inputBase,
+  formError,
+  formSuccess,
 } from '@/styles/theme';
 
 export default function ForgotPassword() {
@@ -19,6 +21,7 @@ export default function ForgotPassword() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,7 +51,6 @@ export default function ForgotPassword() {
     }
   };
 
-  // ✅ Auto-hide messages after 2.5s
   useEffect(() => {
     if (message || error) {
       const timer = setTimeout(() => {
@@ -81,16 +83,8 @@ export default function ForgotPassword() {
           <p className={forgotPasswordText}>Enter your email and we'll send you a reset link.</p>
 
           {/* Feedback Messages */}
-          {message && (
-            <p className="text-sm text-green-700 bg-green-100 px-3 py-2 rounded text-center mt-2 animate-pulse">
-              {message}
-            </p>
-          )}
-          {error && (
-            <p className="text-sm text-red-600 bg-red-100 px-3 py-2 rounded text-center mt-2 animate-pulse">
-              {error}
-            </p>
-          )}
+          {message && <p className={formSuccess}>{message}</p>}
+          {error && <p className={formError}>{error}</p>}
 
           {/* Form */}
           <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
@@ -111,11 +105,15 @@ export default function ForgotPassword() {
             </button>
           </form>
 
-          {/* Back Link */}
+          {/* Back Button instead of Link */}
           <div className="mt-6 text-center">
-            <Link href="/login" className={backLink}>
+            <button
+              type="button"
+              onClick={() => router.push('/login')}
+              className={backLink}
+            >
               ← Back to Log In
-            </Link>
+            </button>
           </div>
         </div>
       </div>
