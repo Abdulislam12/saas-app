@@ -3,37 +3,33 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
     Home,
     Users,
-    FileText,
-    CreditCard,
-    Package,
-    BarChart3,
+    Linkedin,
+    Captions,
     X,
-    Receipt,
-    BookOpen,
     LogOut,
     Lock,
-    Banknote,
+    CircleDollarSign
 } from "lucide-react";
 import ConfirmationModal from "./ConfirmationModal";
+import { logout } from "@/lib/authSlice";
 
 const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
-    { name: "Profile", href: "/profile", icon: Users },
-    { name: "Linkedin", href: "/post-title-generator", icon: Package },
-    { name: "Invoices", href: "/invoices", icon: FileText },
-    { name: "Payments", href: "/payments", icon: CreditCard },
-    { name: "Expenses", href: "/expenses", icon: Receipt },
-    { name: "Accounts", href: "/accounts", icon: Banknote },
-    { name: "Ledger", href: "/ledger", icon: BookOpen },
-    { name: "Reports", href: "/reports", icon: BarChart3 },
+    { name: "Profile", href: "/dashboard/profile", icon: Users },
+    { name: "Linkedin", href: "/dashboard/generate-titles", icon: Linkedin },
+    { name: "Your Titles", href: "/dashboard/your-titles", icon: Captions },
+    { name: "Subscriptions", href: "/dashboard/subscriptions", icon: CircleDollarSign },
+
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const pathname = usePathname();
     const router = useRouter();
+    const dispatch = useDispatch();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
 
@@ -47,16 +43,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     };
 
     const handleLogoutConfirm = async () => {
-        setLoggingOut(true);
-        try {
-            await fetch("/api/logout", { method: "POST" });
-            router.push("/login");
-        } catch (error) {
-            console.error("Sign out error:", error);
-        } finally {
-            setLoggingOut(false);
-            setShowLogoutModal(false);
-        }
+        dispatch(logout());
+        router.push("/login")
     };
 
     const renderNavItem = (item, isMobile = false) => {
@@ -111,7 +99,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             }`}
                     >
                         <div className="flex h-16 items-center justify-between px-4">
-                            <h1 className="text-xl font-bold text-gray-900">Rustam Industry</h1>
+                            <h1 className="text-xl font-bold text-gray-900">Saas Ai App</h1>
                             <button
                                 onClick={() => setSidebarOpen(false)}
                                 className="text-gray-400 hover:text-gray-600"
@@ -126,7 +114,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <div className="pt-4 border-t border-gray-200" style={{ marginTop: "16px" }}>
                                 {renderNavItem(
-                                    { name: "Change Password", href: "/change-password", icon: Lock },
+                                    { name: "Change Password", href: "/dashboard/change-password", icon: Lock },
                                     true
                                 )}
                                 {renderNavItem({ name: "Sign Out", href: "#", icon: LogOut }, true)}
@@ -140,7 +128,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-56 lg:flex-col">
                 <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
                     <div className="flex h-16 items-center px-4">
-                        <h1 className="text-xl font-bold text-gray-900">Rustam Industry</h1>
+                        <h1 className="text-xl font-bold text-gray-900">Saas Ai App</h1>
                     </div>
                     <nav className="flex-1 space-y-1 px-4 py-2">
                         <div className="border-t border-gray-200 mb-4"></div>
@@ -148,7 +136,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         {navigation.map((item) => renderNavItem(item))}
 
                         <div className="pt-4 border-t border-gray-200" style={{ marginTop: "16px" }}>
-                            {renderNavItem({ name: "Change Password", href: "/change-password", icon: Lock })}
+                            {renderNavItem({ name: "Change Password", href: "/dashboard/change-password", icon: Lock })}
                             {renderNavItem({ name: "Sign Out", href: "#", icon: LogOut })}
                         </div>
                     </nav>

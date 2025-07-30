@@ -65,7 +65,7 @@ export const formSuccess =
   'text-sm text-green-700 bg-green-100 px-3 py-2 rounded text-center mt-2 animate-pulse';
 
 export const passwordToggle =
-  'absolute inset-y-0 right-3 top-9 text-sm text-blue-600 hover:underline focus:outline-none';
+  'absolute inset-y-0 right-3 flex items-center justify-center';
 
 export const loginRedirectText =
   'text-center mt-4 text-sm text-gray-600';

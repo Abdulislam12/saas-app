@@ -13,7 +13,9 @@ import {
   formError,
   headingText,
   subText,
-} from "@/styles/theme"; // adjust the import path if needed
+} from "@/styles/theme";
+
+import { Eye, EyeOff } from "lucide-react";
 
 export default function ChangePasswordPage() {
   const [formData, setFormData] = useState({
@@ -84,96 +86,54 @@ export default function ChangePasswordPage() {
     }
   };
 
+  const renderInput = (field, label) => (
+    <div>
+      <label htmlFor={field} className={formLabel}>
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={field}
+          name={field}
+          type={showPasswords[field] ? "text" : "password"}
+          required
+          className={inputBase}
+          value={formData[field]}
+          onChange={handleInputChange}
+        />
+        <button
+          type="button"
+          className={`${passwordToggle} cursor-pointer`}
+          onClick={() => togglePasswordVisibility(field)}
+          aria-label={`Toggle ${field}`}
+        >
+          {showPasswords[field] ? (
+            <EyeOff className="h-5 w-5 text-gray-500" />
+          ) : (
+            <Eye className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className={pageWrapper}>
+    <div className={`${pageWrapper} px-4 sm:px-6 lg:px-8`}>
       <div className={cardContainer}>
         <h2 className={`${headingText} text-center mb-2`}>Change Password</h2>
         <p className={subText}>Update your account password</p>
 
         <form className="space-y-5 mt-6" onSubmit={handleSubmit}>
-          {/* Current Password */}
-          <div>
-            <label htmlFor="currentPassword" className={formLabel}>
-              Current Password
-            </label>
-            <div className="relative">
-              <input
-                id="currentPassword"
-                name="currentPassword"
-                type={showPasswords.current ? "text" : "password"}
-                required
-                className={inputBase}
-                value={formData.currentPassword}
-                onChange={handleInputChange}
-              />
-              <button
-                type="button"
-                className={passwordToggle}
-                onClick={() => togglePasswordVisibility("current")}
-              >
-                {showPasswords.current ? "Hide" : "Show"}
-              </button>
-            </div>
-          </div>
+          {renderInput("currentPassword", "Current Password")}
+          {renderInput("newPassword", "New Password")}
+          {renderInput("confirmPassword", "Confirm New Password")}
 
-          {/* New Password */}
-          <div>
-            <label htmlFor="newPassword" className={formLabel}>
-              New Password
-            </label>
-            <div className="relative">
-              <input
-                id="newPassword"
-                name="newPassword"
-                type={showPasswords.new ? "text" : "password"}
-                required
-                className={inputBase}
-                value={formData.newPassword}
-                onChange={handleInputChange}
-              />
-              <button
-                type="button"
-                className={passwordToggle}
-                onClick={() => togglePasswordVisibility("new")}
-              >
-                {showPasswords.new ? "Hide" : "Show"}
-              </button>
-            </div>
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label htmlFor="confirmPassword" className={formLabel}>
-              Confirm New Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showPasswords.confirm ? "text" : "password"}
-                required
-                className={inputBase}
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
-              <button
-                type="button"
-                className={passwordToggle}
-                onClick={() => togglePasswordVisibility("confirm")}
-              >
-                {showPasswords.confirm ? "Hide" : "Show"}
-              </button>
-            </div>
-          </div>
-
-          {/* Status Message */}
           {statusMessage && (
             <div className={statusMessage.type === "error" ? formError : formSuccess}>
               {statusMessage.text}
             </div>
           )}
 
-          {/* Submit */}
           <button type="submit" disabled={loading} className={buttonPrimary}>
             {loading ? "Changing..." : "Change Password"}
           </button>

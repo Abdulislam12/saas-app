@@ -8,13 +8,14 @@ const JWT_SECRET = process.env.JWT_SECRET // make sure this is defined in .env
 
 export async function POST() {
   try {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')?.value
+    const cookieStore = await cookies()
+    const token =  cookieStore.get('token')?.value
 
     if (token) {
       // Decode the token to get the user ID
-      const decoded = verify(token, JWT_SECRET)
-      const userId = decoded.id
+      const decoded = verify(token, JWT_SECRET);
+      const userId = decoded.userId;
+      console.log("userId :", userId);
 
       // Remove the token from DB (set it to null)
       await prisma.user.update({

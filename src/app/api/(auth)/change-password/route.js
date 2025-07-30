@@ -37,7 +37,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const userId = decoded?.id || decoded?.userId || decoded?.sub;
+    const userId = decoded?.id || decoded?.userId || decoded?.sub; // this line
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID not found in token' }, { status: 401 });

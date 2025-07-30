@@ -22,11 +22,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {/* <DashboardLayoutWrapper> */}
-          <ReduxProvider>
-            {children}
-          </ReduxProvider> {/* ✅ wrap here only */}
-        {/* </DashboardLayoutWrapper> */}
+        <ReduxProvider>
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   );

@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb"; // ✅ FIX
 const prisma = new PrismaClient();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export const POST = async (req) => {
+export async function POST(req) {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -97,7 +97,43 @@ Return only a numbered list of 5 post titles, and nothing else.
       );
     }
     return NextResponse.json(
-      { error: "An unexpected error occurred while generating titles." },
+      { error: error.message },
+      { status: 500 }
+    );
+  }
+};
+
+export async function GET() {
+  try {
+    const cookieStore = await cookies(); // ✅ Await cookies
+    const token = cookieStore.get("token")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized. No token provided." }, { status: 401 });
+    }
+
+    let decoded;
+    try {
+      decoded = verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
+    }
+
+    const userId = decoded.userId || decoded.id;
+    if (!userId) {
+      return NextResponse.json({ error: "Token does not contain user information." }, { status: 400 });
+    }
+
+    const articles = await prisma.title.findMany({
+      where: { userId },
+    });
+
+    return NextResponse.json({ articles }, { status: 200 });
+
+  } catch (error) {
+    console.error("GET /api/articles error:", error);
+    return NextResponse.json(
+      { error: "An unexpected error occurred while fetching articles." },
       { status: 500 }
     );
   }
